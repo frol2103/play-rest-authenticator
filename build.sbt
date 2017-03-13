@@ -2,7 +2,10 @@ name := """play-rest-authenticator"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file("."))
+  .enablePlugins(PlayScala)
+  .configs( IntegrationTest )
+  .settings( Defaults.itSettings : _*)
 
 scalaVersion := "2.11.7"
 
@@ -26,7 +29,7 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-testkit" % "3.0.0" % "test",
   "org.reactivemongo" %% "play2-reactivemongo" % "0.11.7.play24",
   specs2 % Test,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
+  libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % Test
 )
 
 routesGenerator := InjectedRoutesGenerator
