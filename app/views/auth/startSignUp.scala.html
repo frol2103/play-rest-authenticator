@@ -3,8 +3,8 @@
 @implicitFieldConstructor = @{b3.horizontal.fieldConstructor("col-md-3","col-md-6")}
 
 @views.html.templates.mainAuth(Messages("signup.title"), tab = "signup") {
-  @request.flash.get("error").map { msg =>
-    @errors.alert(msg, "error")
+  @request.flash.get("errors").map { msg =>
+    @errors.alert(msg, "errors")
   }
   @b3.form(routes.Auth.handleStartSignUp) {
     <fieldset>

@@ -1,4 +1,4 @@
-name := """play-rest-authenticator"""
+name := """dwdemo"""
 
 version := "1.0-SNAPSHOT"
 

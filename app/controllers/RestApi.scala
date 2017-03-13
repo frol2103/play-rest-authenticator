@@ -25,12 +25,12 @@ class RestApi @Inject() (
       (__ \ 'passordInfo).json.prune andThen 
       (__ \ 'oauth1Info).json.prune)
     prunedJson.fold(
-      _ => Future.successful(InternalServerError(Json.obj("error" -> Messages("error.profileError")))),
+      _ => Future.successful(InternalServerError(Json.obj("errors" -> Messages("error.profileError")))),
       js => Future.successful(Ok(js))
     )
   }
 
   override def onNotAuthenticated(request:RequestHeader) = {
-    Some(Future.successful(Unauthorized(Json.obj("error" -> Messages("error.profileUnauth")))))
+    Some(Future.successful(Unauthorized(Json.obj("errors" -> Messages("error.profileUnauth")))))
   }
 }

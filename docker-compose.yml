@@ -1,22 +1,15 @@
 version: '2'
 
-
 services:
-
   db:
     image: mongo
 
-  backend:
+  app:
     image: docker.centran.in:5000/activator:1.3.12
     volumes:
-      - ../../backend:/src
+      - .:/src
       - ~:/var/home
     ports:
       - 9000:9000
     command: activator run
     stdin_open: true
-
-  smtp:
-    image: mailhog/mailhog
-    ports:
-      - 8025

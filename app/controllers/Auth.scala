@@ -98,7 +98,7 @@ class Auth @Inject() (
         userService.retrieve(loginInfo).flatMap {
           case Some(_) => 
             Future.successful(Redirect(routes.Auth.startSignUp()).flashing(
-              "error" -> Messages("error.userExists", signUpData.email)))
+              "errors" -> Messages("error.userExists", signUpData.email)))
           case None => 
             val profile = Profile(
               loginInfo = loginInfo, 
@@ -108,11 +108,10 @@ class Auth @Inject() (
               lastName = Some(signUpData.lastName), 
               fullName = Some(s"${signUpData.firstName} ${signUpData.lastName}"),
               passwordInfo = None, 
-              oauth1Info = None,
-              avatarUrl = None)
+              oauth1Info = None)
             for {
               avatarUrl <- avatarService.retrieveURL(signUpData.email)
-              user <- userService.save(User(id = UUID.randomUUID(), profiles = List(profile.copy(avatarUrl = avatarUrl))))
+              user <- userService.save(User(id = UUID.randomUUID(), profiles = List(profile)))
               _ <- authInfoRepository.add(loginInfo, passwordHasher.hash(signUpData.password))
               token <- userTokenService.save(UserToken.create(user.id, signUpData.email, true))
             } yield {
@@ -162,9 +161,9 @@ class Auth @Inject() (
         credentialsProvider.authenticate(credentials).flatMap { loginInfo => 
           userService.retrieve(loginInfo).flatMap {
             case None => 
-              Future.successful(Redirect(routes.Auth.signIn()).flashing("error" -> Messages("error.noUser")))
+              Future.successful(Redirect(routes.Auth.signIn()).flashing("errors" -> Messages("error.noUser")))
             case Some(user) if !user.profileFor(loginInfo).map(_.confirmed).getOrElse(false) => 
-              Future.successful(Redirect(routes.Auth.signIn()).flashing("error" -> Messages("error.unregistered", signInData.email)))
+              Future.successful(Redirect(routes.Auth.signIn()).flashing("errors" -> Messages("error.unregistered", signInData.email)))
             case Some(_) => for {
               authenticator <- env.authenticatorService.create(loginInfo).map { 
                 case authenticator if signInData.rememberMe =>
@@ -181,7 +180,7 @@ class Auth @Inject() (
             } yield result
           }
         }.recover {
-          case e:ProviderException => Redirect(routes.Auth.signIn()).flashing("error" -> Messages("error.invalidCredentials"))
+          case e:ProviderException => Redirect(routes.Auth.signIn()).flashing("errors" -> Messages("error.invalidCredentials"))
         }
       }
     )
@@ -199,7 +198,7 @@ class Auth @Inject() (
     emailForm.bindFromRequest.fold(
       bogusForm => Future.successful(BadRequest(views.html.auth.startResetPassword(bogusForm))),
       email => userService.retrieve(LoginInfo(CredentialsProvider.ID, email)).flatMap {
-        case None => Future.successful(Redirect(routes.Auth.startResetPassword()).flashing("error" -> Messages("error.noUser")))
+        case None => Future.successful(Redirect(routes.Auth.startResetPassword()).flashing("errors" -> Messages("error.noUser")))
         case Some(user) => for {
           token <- userTokenService.save(UserToken.create(user.id, email, isSignUp = false))
         } yield {
@@ -260,13 +259,13 @@ class Auth @Inject() (
       } 
       case _ => Future.successful(
         Redirect(request.identity.fold(routes.Auth.signIn())(_ => routes.Application.profile())).flashing(
-          "error" -> Messages("error.noProvider", providerId))
+          "errors" -> Messages("error.noProvider", providerId))
       )
     }).recover {
       case e:ProviderException => 
         logger.error("Provider error", e)
         Redirect(request.identity.fold(routes.Auth.signIn())(_ => routes.Application.profile()))
-          .flashing("error" -> Messages("error.notAuthenticated", providerId))
+          .flashing("errors" -> Messages("error.notAuthenticated", providerId))
     }
   }
 }
