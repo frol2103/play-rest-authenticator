@@ -1,5 +1,5 @@
-Play rest authenticator
-===========================
+![build infos](https://travis-ci.org/frol2103/play-rest-authenticator.svg?branch=master) Play rest authenticator
+================================================================================================================
 
 This is a [Play framework](https://www.playframework.com/) starter application written in Scala. 
 It implements user management and authentication with [Silhouette](http://silhouette.mohiva.com/) 
