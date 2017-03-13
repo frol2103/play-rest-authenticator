@@ -11,5 +11,5 @@ script:
     -v $HOME:/var/home/ 
     -v $(pwd):/src 
     frol2103/activator:1.3.12 
-    /opt/activator/bin/activator clean test
+    /opt/activator/bin/activator clean compile
 
