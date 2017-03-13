@@ -58,8 +58,7 @@ trait DaoSpecResources {
     lastName = Some("Doe"),
     fullName = Some("John Doe"),
     passwordInfo = None,
-    oauth1Info = None,
-    avatarUrl = Some("http://www.gravatar.com"))
+    oauth1Info = None)
 
   val testOauth1Profile = Profile(
     loginInfo = oauth1LoginInfo,
@@ -69,8 +68,8 @@ trait DaoSpecResources {
     lastName = Some("Doe"),
     fullName = Some("John Doe"),
     passwordInfo = None,
-    oauth1Info = None,
-    avatarUrl = Some("http://www.gravatar.com"))
+    oauth1Info = None
+  )
 
     val cleanTestUser = User(UUID.randomUUID(), List(testPasswordProfile))
     val credentialsTestUser = User(UUID.randomUUID(), List(testPasswordProfile.copy(passwordInfo = Some(passwordInfo))))
