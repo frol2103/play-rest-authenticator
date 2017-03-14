@@ -7,6 +7,8 @@ lazy val root = (project in file("."))
   .configs( IntegrationTest )
   .settings( Defaults.itSettings : _*)
 
+scalaSource in IntegrationTest := baseDirectory.value / "it/scala"
+
 scalaVersion := "2.11.7"
 
 resolvers ++= Seq(
@@ -29,7 +31,7 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-testkit" % "3.0.0" % "test",
   "org.reactivemongo" %% "play2-reactivemongo" % "0.11.7.play24",
   specs2 % Test,
-  libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % Test
+  "org.scalatest" %% "scalatest" % "3.0.1" % IntegrationTest
 )
 
 routesGenerator := InjectedRoutesGenerator
