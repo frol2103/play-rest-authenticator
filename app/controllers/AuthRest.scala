@@ -64,7 +64,7 @@ class AuthRest @Inject()(
   }
 
 
-  def authenticate = Action.async(BodyParsers.parse.json) { implicit request =>
+  def signIn = Action.async(BodyParsers.parse.json) { implicit request =>
     Future {
       request.body.validate[Credentials].get
     }
