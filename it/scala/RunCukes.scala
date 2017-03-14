@@ -4,7 +4,7 @@ import org.junit.runner.RunWith
 
 @RunWith(classOf[Cucumber])
 @CucumberOptions(
-  features = Array("features"),
+  features = Array("it/resources/features"),
   glue = Array("steps"),
   tags = Array("~@pending"),
   format = Array("pretty", "html:target/reports/cucumber")
