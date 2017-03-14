@@ -31,7 +31,12 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-testkit" % "3.0.0" % "test",
   "org.reactivemongo" %% "play2-reactivemongo" % "0.11.7.play24",
   specs2 % Test,
-  "org.scalatest" %% "scalatest" % "3.0.1" % IntegrationTest
+  specs2 % IntegrationTest,
+  "org.scalatest" %% "scalatest" % "3.0.1" % IntegrationTest,
+  "info.cukes" %% "cucumber-scala" % "1.2.5" % IntegrationTest,
+  "info.cukes" % "cucumber-junit" % "1.2.5" % IntegrationTest,
+  "org.scalaj" %% "scalaj-http" % "2.3.0" % IntegrationTest
+
 )
 
 routesGenerator := InjectedRoutesGenerator

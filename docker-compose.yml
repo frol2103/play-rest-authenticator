@@ -11,5 +11,5 @@ services:
       - ~:/var/home
     ports:
       - 9000:9000
-    command: activator test
+    command: activator run
     stdin_open: true
