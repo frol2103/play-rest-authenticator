@@ -29,3 +29,8 @@ script:
     --network playrestauthenticator_default
     frol2103/activator:1.3.12 
     /opt/activator/bin/activator clean it:test
+
+notifications:
+  email:
+    on_success: always
+    on_failure: always 
