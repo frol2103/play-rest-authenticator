@@ -1,7 +1,7 @@
 package steps
 
-import cucumber.api.scala.{EN, ScalaDsl}
-import netscape.javascript.JSObject
+
+import cucumber.api.java.en.Given
 import org.scalatest.Matchers
 import play.api.libs.json.Writes
 import steps.support.Config
@@ -11,27 +11,29 @@ import scalaj.http.Http
 class SignupSteps extends Steps {
 
 
-  Given("""I signup with email (.*) and password (.*)$"""){ (email:String, password:String) =>
+  @Given("""I signup with email (.*) and password (.*)$""")
+  def iSignUp(email:String, password:String) = {
     response = http("/rest/auth/signup").put(
       json("firstname"->"foo",
         "lastname"->"bar",
         "email"->email,
         "password"->password)
     ).asString
-    response.code should be (200)
+    response.code should be(200)
   }
 
-  Given("""I signin with email (.*) and password (.*)$"""){ (email:String, password:String) =>
+  @Given("""I signin with email (.*) and password (.*)$""")
+  def iSignIn(email:String, password:String) = {
     response = http("/rest/auth/signin").postData(
       json("email"->email,
         "password"->password)
     ).asString
-    response.code should be (200)
+    response.code should be(200)
   }
 
 }
 
-class Steps extends ScalaDsl with EN with Matchers with Config {
+class Steps extends Matchers with Config {
 
   def json[T](obj:T)(implicit writes : Writes[T]) : String = writes.writes(obj).toString()
   def json[T](values : (String, T)*)(implicit writes : Writes[T]) : String = json(values.toMap)
