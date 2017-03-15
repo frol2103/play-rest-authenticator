@@ -1,14 +1,16 @@
 package steps
 
 
+import com.google.inject.Inject
 import cucumber.api.java.en.Given
 import org.scalatest.Matchers
 import play.api.libs.json.Writes
-import steps.support.Config
+import steps.support.{Config, StepsData}
 
 import scalaj.http.Http
 
-class SignupSteps extends Steps {
+
+class SignupSteps @Inject()(stepsData : StepsData) extends Steps {
 
 
   @Given("""I signup with email (.*) and password (.*)$""")
