@@ -20,6 +20,7 @@ import services.{UserService, UserTokenService}
 import utils.Mailer
 import utils.Utils._
 import utils.FutureUtils._
+import utils.bodyparser.JsonParser
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
@@ -53,21 +54,17 @@ class AuthRest @Inject()(
 
   def loginInfo(email: String) = LoginInfo(CredentialsProvider.ID, email)
 
-  def signUp = Action.async(BodyParsers.parse.json) { request =>
-    Future {
-      request.body.validate[Profile](newUserCredentialsRead).get
-    }
+  def signUp = Action.async(JsonParser.successWith(newUserCredentialsRead)) { request =>
+      request.body
       .flatMap(userService.saveNewUser)
       .flatMap(u => authInfoRepository.save(u.profiles.head.loginInfo, u.profiles.head.passwordInfo.get).map(_ => u))
       .flatMap(u => userTokenService.save(UserToken.create(u.id, u.profiles.head.email.get, true)).map(_ => u))
-      .map(_ => Ok("Success"))
+      .map(_ => Ok)
   }
 
 
-  def signIn = Action.async(BodyParsers.parse.json) { implicit request =>
-    Future {
-      request.body.validate[Credentials].get
-    }
+  def signIn = Action.async(JsonParser.success[Credentials]) { implicit request =>
+      request.body
       .flatMap(credentialsProvider.authenticate)
       .zipMap(userService.retrieve)
       .map {
@@ -77,7 +74,7 @@ class AuthRest @Inject()(
       }
       .flatMap(env.authenticatorService.create(_))
       .flatMap(env.authenticatorService.init)
-      .flatMap(env.authenticatorService.embed(_, Ok("success")))
+      .flatMap(env.authenticatorService.embed(_, Ok))
   }
 
   def profile = UserAwareAction.async{ request =>
