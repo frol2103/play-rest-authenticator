@@ -15,22 +15,20 @@ class SignupSteps @Inject()(stepsData : StepsData) extends Steps {
 
   @Given("""I signup with email (.*) and password (.*)$""")
   def iSignUp(email:String, password:String) = {
-    response = http("/rest/auth/signup").put(
+    stepsData.response = http("/rest/auth/signup").put(
       json("firstname"->"foo",
         "lastname"->"bar",
         "email"->email,
         "password"->password)
     ).asString
-    response.code should be(200)
   }
 
   @Given("""I signin with email (.*) and password (.*)$""")
   def iSignIn(email:String, password:String) = {
-    response = http("/rest/auth/signin").postData(
+    stepsData.response = http("/rest/auth/signin").postData(
       json("email"->email,
         "password"->password)
     ).asString
-    response.code should be(200)
   }
 
 }
