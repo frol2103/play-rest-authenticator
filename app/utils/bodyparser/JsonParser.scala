@@ -1,11 +1,13 @@
 package utils.bodyparser
 
-import errors.AuthenticationException
+import errors.{AuthenticationException, ErrorsForJsPath}
 import org.bouncycastle.asn1.cms.AuthEnvelopedData
-import play.api.libs.json.Reads
+import play.api.data.validation.ValidationError
+import play.api.libs.json.{JsError, JsSuccess, Reads}
 import play.api.mvc.{BodyParser, BodyParsers}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 /**
   * Created by francois on 16/03/17.
@@ -13,7 +15,11 @@ import scala.concurrent.{ExecutionContext, Future}
 object JsonParser {
   def apply[T](implicit reads:Reads[T], executionContext: ExecutionContext) : BodyParser[T] = {
     BodyParsers.parse.json
-      .map(_.validate[T].getOrElse(throw new AuthenticationException("INCORRECT_DATA", "Incorrect input data")))
+      .map(_.validate[T])
+      .map {
+        case JsSuccess(s,_) => s
+        case JsError(e) => throw new AuthenticationException("INCORRECT_DATA", "Incorrect input data", inputExceptions =  e.map(new ErrorsForJsPath(_)))
+      }
   }
 
   def success[T](implicit reads:Reads[T], executionContext: ExecutionContext) = apply.map(Future.successful(_))
