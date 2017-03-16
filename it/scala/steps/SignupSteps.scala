@@ -26,7 +26,7 @@ class SignupSteps @Inject()(stepsData : StepsData) extends Steps {
   @Given("""I signin with email (.*) and password (.*)$""")
   def iSignIn(email:String, password:String) = {
     stepsData.response = http("/rest/auth/signin").postData(
-      json("email"->email,
+      json("identifier"->email,
         "password"->password)
     ).asString
   }
