@@ -7,12 +7,12 @@ import scalaj.http.HttpResponse;
 /**
   * Created by francois on 14/03/17.
   */
-@ScenarioScoped
-class StepsData(
-               var response:HttpResponse[_]
-               )
+object StepsData
 {
-  def this() = this(null)
+  var response:HttpResponse[_] = null
+
+
+
   def responseJsonBody : JsValue= {
     Option(response)
       .map(_.body.toString)

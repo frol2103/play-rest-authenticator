@@ -14,6 +14,7 @@ scalaVersion := "2.11.7"
 resolvers ++= Seq(
   "Atlassian Releases" at "https://maven.atlassian.com/public/",
   "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+  "Maven centran" at  "http://central.maven.org/maven2/",
   Resolver.sonatypeRepo("snapshots")
  )
 
@@ -33,7 +34,7 @@ libraryDependencies ++= Seq(
   specs2 % Test,
   specs2 % IntegrationTest,
   "org.scalatest" %% "scalatest" % "3.0.1" % IntegrationTest,
-  "info.cukes" % "cucumber-java" % "1.2.5" % IntegrationTest,
+  "info.cukes" %% "cucumber-scala" % "1.2.5" % IntegrationTest,
   "info.cukes" % "cucumber-junit" % "1.2.5" % IntegrationTest,
   "info.cukes" % "cucumber-guice" % "1.2.5" % IntegrationTest,
   "org.scalaj" %% "scalaj-http" % "2.3.0" % IntegrationTest
