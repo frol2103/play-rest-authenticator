@@ -1,5 +1,6 @@
 package steps.support
 import cucumber.runtime.java.guice.ScenarioScoped
+import play.api.libs.json.{JsValue, Json}
 
 import scalaj.http.HttpResponse;
 
@@ -12,4 +13,10 @@ class StepsData(
                )
 {
   def this() = this(null)
+  def responseJsonBody : JsValue= {
+    Option(response)
+      .map(_.body.toString)
+      .map(Json.parse)
+      .getOrElse(throw new RuntimeException("No response"))
+  }
 }
