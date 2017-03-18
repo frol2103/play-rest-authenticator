@@ -2,9 +2,8 @@ package steps
 
 import com.google.inject.Inject
 import cucumber.api.scala.{EN, ScalaDsl}
-
 import org.scalatest.Matchers
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.{JsArray, JsString, Json}
 import play.api.mvc.BodyParsers
 import steps.support.{Config, StepsData}
 import utils.bodyparser.JsonParser
@@ -22,9 +21,16 @@ class HealthSteps extends Steps{
     stepsData.response.code should be(status)
   }
 
-  Then("""^a (.*) error should be thrown$"""){(code: String) =>
+  Then("""^an? (.*) error should be thrown$"""){(code: String) =>
     stepsData.responseJsonBody.\("code").get should be(JsString(code))
   }
+
+  Then("""^there is an error (.*) for (.*)$"""){(error: String, path:String) =>
+    implicit val format = Json.format[ErrorForJsPathBasic]
+    val exceptions = stepsData.responseJsonBody.\("inputExceptions").validate[Seq[ErrorForJsPathBasic]].get
+    exceptions.find(_.jsPath == path).flatMap(_.errors.find(_ == error)).isDefined should be(true)
+  }
+
 
   Then("""^the body of the response is "([^"]*)"$"""){( body: String) =>
     stepsData.response.body should be(body)
@@ -33,3 +39,4 @@ class HealthSteps extends Steps{
 
 
 }
+case class ErrorForJsPathBasic(jsPath:String, errors:Seq[String])

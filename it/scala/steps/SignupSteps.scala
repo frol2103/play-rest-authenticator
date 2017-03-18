@@ -18,15 +18,17 @@ class SignupSteps extends Steps {
     stepsData.response = http("/rest/auth/signup").put(
       json("firstname"->"foo",
         "lastname"->"bar",
-        "email"->email,
-        "password"->password)
+        "email"->parse(email),
+        "password"->parse(password))
     ).asString
+    println(stepsData.response)
+    println(password)
   }
 
   Given("""I signin with email (.*) and password (.*)$"""){(email:String, password:String) =>
     stepsData.response = http("/rest/auth/signin").postData(
-      json("identifier"->email,
-        "password"->password)
+      json("identifier"->parse(email),
+        "password"->parse(password))
     ).asString
   }
 
@@ -35,7 +37,9 @@ class SignupSteps extends Steps {
 class Steps extends Matchers with Config  with ScalaDsl with EN {
 
   def json[T](obj:T)(implicit writes : Writes[T]) : String = writes.writes(obj).toString()
-  def json[T](values : (String, T)*)(implicit writes : Writes[T]) : String = json(values.toMap)
+  def json[T](values : (String, T)*)(implicit writes : Writes[T]) : String = json(values.filterNot(_._2 == null).toMap)
+
+  def parse(s:String) = if(s == "-") null else s
 
   def stepsData = StepsData
 
