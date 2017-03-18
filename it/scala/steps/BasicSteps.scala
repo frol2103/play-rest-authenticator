@@ -11,7 +11,7 @@ import play.api.libs.json.JsValue._
 
 import scalaj.http.Http
 
-class HealthSteps extends Steps{
+class BasicSteps extends Steps{
 
   When("""^a request is made to the (.*) endpoint$""") {( endpoint: String) =>
     stepsData.response = http(endpoint).asString
