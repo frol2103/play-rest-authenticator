@@ -5,7 +5,7 @@ import java.util.UUID
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{JsPath, Json, Writes}
 import play.api.libs.functional.syntax._
-import utils.WritesUtils._
+import utils.JsonUtils._
 /**
   * Created by francois on 16/03/17.
   */
