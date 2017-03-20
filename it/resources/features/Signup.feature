@@ -18,4 +18,4 @@ Feature: Signup to the application with user password
 		Given I signup with email nopass@test.be and password -
 		Then a 400 status code is received
 		And an INCORRECT_DATA error should be thrown
-		And there is an error error.path.missing for /password
+		And there is an error error.path.missing for .password

@@ -34,6 +34,7 @@ libraryDependencies ++= Seq(
   specs2 % Test,
   specs2 % IntegrationTest,
   "org.scalatest" %% "scalatest" % "3.0.1" % IntegrationTest,
+  "org.scalatest" %% "scalatest" % "3.0.1" % Test,
   "info.cukes" %% "cucumber-scala" % "1.2.5" % IntegrationTest,
   "info.cukes" % "cucumber-junit" % "1.2.5" % IntegrationTest,
   "info.cukes" % "cucumber-guice" % "1.2.5" % IntegrationTest,

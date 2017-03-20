@@ -23,8 +23,6 @@ case class AuthenticationException(code : String,
 }
 
 object AuthenticationException{
-  def ts(jsPath: JsPath) = jsPath.toString()
-  implicit val jsPathWrites : Writes[JsPath] = implicitly[Writes[String]].contramap[JsPath](ts)
   implicit val validationErrorWrites : Writes[ValidationError] = implicitly[Writes[String]].contramap[ValidationError](_.message)
   implicit val errorsForJsPath = Json.writes[ErrorsForJsPath]
 
