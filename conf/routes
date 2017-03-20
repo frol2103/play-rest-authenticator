@@ -2,8 +2,6 @@
 GET     /                           controllers.Application.index
 GET     /profile                    controllers.Application.profile
 
-# Rest api
-GET      /rest/profile              controllers.RestApi.profile
 
 # Authentication
 GET     /auth/signup                controllers.Auth.startSignUp
@@ -12,7 +10,7 @@ GET     /auth/signup/:token         controllers.Auth.signUp(token:String)
 
 PUT     /rest/auth/signup           controllers.AuthRest.signUp
 POST    /rest/auth/signin           controllers.AuthRest.signIn
-GET     /rest/auth/profile          controllers.AuthRest.profile
+GET     /rest/auth/profile          controllers.RestApi.profile
 
 GET     /auth/signin                controllers.Auth.signIn
 POST    /auth/authenticate          controllers.Auth.authenticate

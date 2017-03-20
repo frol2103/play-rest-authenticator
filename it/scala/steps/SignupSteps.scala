@@ -1,28 +1,26 @@
 package steps
 
-
-import com.google.inject.Inject
-import cucumber.api.java.en.Given
-import cucumber.api.scala.{EN, ScalaDsl}
-import org.scalatest.Matchers
-import play.api.libs.json.Writes
-import steps.support.{Config, StepsData}
-
-import scalaj.http.Http
-
+import play.api.libs.json.{JsPath, JsString, Json}
+import utils.JsonUtils._
 
 class SignupSteps extends Steps {
 
 
   Given("""I signup with email (.*) and password (.*)$"""){(email:String, password:String) =>
+    signup(email, password)
+  }
+
+  private def signup(email: String, password: String, firstname: String = "foo", lastname: String = "bar") = {
     stepsData.response = http("/rest/auth/signup").put(
-      json("firstname"->"foo",
-        "lastname"->"bar",
-        "email"->parse(email),
-        "password"->parse(password))
+      json("firstname" -> firstname,
+        "lastname" -> lastname,
+        "email" -> parse(email),
+        "password" -> parse(password))
     ).asString
-    println(stepsData.response)
-    println(password)
+  }
+
+  Given("""I signup with email (.*) password (.*) firstname (.*) and lastname (.*)""") {
+    (email: String, password: String, firstname: String, lastname: String) => signup(email, password, firstname, lastname)
   }
 
   Given("""I signin with email (.*) and password (.*)$"""){(email:String, password:String) =>
@@ -30,6 +28,17 @@ class SignupSteps extends Steps {
       json("identifier"->parse(email),
         "password"->parse(password))
     ).asString
+  }
+
+
+  When("I ask for the current profile") { () =>
+    stepsData.response = http("/rest/auth/profile")
+      .asString
+  }
+
+  Then("""^repsonse should have (.*) equals to (.*)$""") { (path: String, value: String) =>
+    val jsPath = JsString(path).validate[JsPath].get
+    jsPath.read[String].reads(stepsData.responseJsonBody).get should be(value)
   }
 
 }

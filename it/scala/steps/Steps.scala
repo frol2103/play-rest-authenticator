@@ -19,8 +19,11 @@ class Steps extends Matchers with Config  with ScalaDsl with EN {
 
   def stepsData = StepsData
 
-  def http(endpoint:String) = Http(s"$backendHost$endpoint")
+  def http(endpoint:String) = {
+    Http(s"$backendHost$endpoint")
+      .cookies(stepsData.cookies)
       .header("Content-Type", "application/json;")
       .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
+  }
 
 }

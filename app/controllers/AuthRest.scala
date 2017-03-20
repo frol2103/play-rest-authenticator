@@ -77,9 +77,5 @@ class AuthRest @Inject()(
       .flatMap(env.authenticatorService.embed(_, Ok))
   }
 
-  def profile = UserAwareAction.async{ request =>
-    Future.successful(Ok(request.identity.toString))
-  }
-
 
 }

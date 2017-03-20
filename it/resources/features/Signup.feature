@@ -1,10 +1,13 @@
 Feature: Signup to the application with user password
 
 	Scenario: Signup happy path
-		Given I signup with email signup.correct@test.com and password test
+		Given I signup with email signup.correct@test.com password test firstname foo and lastname bar
 		Then a 200 status code is received
-		And I signin with email signup.correct@test.com and password test
+		Given I signin with email signup.correct@test.com and password test
 		Then a 200 status code is received
+		When I ask for the current profile
+		Then a 200 status code is received
+		And repsonse should have .firstName equals to foo
 
 
 	Scenario: Signup when user already exists

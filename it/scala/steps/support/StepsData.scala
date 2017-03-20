@@ -1,5 +1,6 @@
 package steps.support
-import cucumber.runtime.java.guice.ScenarioScoped
+import java.net.HttpCookie
+
 import play.api.libs.json.{JsValue, Json}
 
 import scalaj.http.HttpResponse;
@@ -9,8 +10,16 @@ import scalaj.http.HttpResponse;
   */
 object StepsData
 {
-  var response:HttpResponse[_] = null
 
+  var _response: HttpResponse[_] = null
+  var cookies: Seq[HttpCookie] = Seq()
+
+  def response = _response
+
+  def response_=(r: HttpResponse[_]) = {
+    this._response = r
+    this.cookies = r.cookies
+  }
 
 
   def responseJsonBody : JsValue= {
