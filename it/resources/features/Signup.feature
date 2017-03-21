@@ -22,3 +22,14 @@ Feature: Signup to the application with user password
 		Then a 400 status code is received
 		And an INCORRECT_DATA error should be thrown
 		And there is an error error.path.missing for .password
+
+	Scenario: Try to signup with an inexisting user
+		Given I signin with email not_existing_account@test.be and password test
+		Then a 400 status code is received
+		And an INVALID_CREDENTIALS error should be thrown
+
+	Scenario: Try to signup with a wrong password
+		Given I signup with email wrong_password@test.com and password test
+		Given I signin with email wrong_password@test.com and password test_wrong
+		Then a 400 status code is received
+		And an INVALID_CREDENTIALS error should be thrown

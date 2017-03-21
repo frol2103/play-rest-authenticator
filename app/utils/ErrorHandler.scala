@@ -4,6 +4,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.SecuredErrorHandler
+import com.mohiva.play.silhouette.impl.exceptions.{IdentityNotFoundException, InvalidPasswordException}
 import play.api.http.DefaultHttpErrorHandler
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Results._
@@ -41,12 +42,18 @@ class ErrorHandler @Inject() (
     val uuid = UUID.randomUUID()
     ErrorHandler.logger.error("Error " + uuid  + " : " + exception.getMessage, exception )
     Future.successful(exception match {
-      case e: AuthenticationException => BadRequest(Json.toJson(e.copy(uuid = Some(uuid))))
+      case e : AuthenticationException => BadRequest(toJsonWithUUID(uuid, e))
+      case e @(_: IdentityNotFoundException | _:InvalidPasswordException) => BadRequest(toJsonWithUUID(uuid,
+        new AuthenticationException("INVALID_CREDENTIALS", "Invalid credentials", Some(e))))
       case e => {
         val authEx = new AuthenticationException("TECHNICAL", "Technical error", Some(e), uuid = Some(uuid))
         InternalServerError(Json.toJson(authEx))
       }
     })
+  }
+
+  private def toJsonWithUUID(uuid: UUID, e: AuthenticationException) = {
+    Json.toJson(e.copy(uuid = Some(uuid)))
   }
 }
 
