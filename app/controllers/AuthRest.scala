@@ -56,9 +56,9 @@ class AuthRest @Inject()(
 
   def signUp = Action.async(JsonParser.successWith(newUserCredentialsRead)) { request =>
       request.body
-      .flatMap(userService.saveNewUser)
-      .flatMap(u => authInfoRepository.save(u.profiles.head.loginInfo, u.profiles.head.passwordInfo.get).map(_ => u))
-      .flatMap(u => userTokenService.save(UserToken.create(u.id, u.profiles.head.email.get, true)).map(_ => u))
+      .zipMap(userService.saveNewUser)
+      .flatMap{case (p,u) => authInfoRepository.save(p.loginInfo, p.passwordInfo.get).map(_ => (p,u))}
+      .flatMap{case (p,u) => userTokenService.save(UserToken.create(u.id, p.email.get, true)).map(t => (p,u,t))}
       .map(_ => Ok)
   }
 
