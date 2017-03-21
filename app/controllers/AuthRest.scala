@@ -17,12 +17,11 @@ import play.api.libs.json.Reads._
 import play.api.libs.json.{JsPath, Json, Reads}
 import play.api.mvc._
 import services.{UserService, UserTokenService}
+import utils.FutureUtils._
 import utils.Mailer
 import utils.Utils._
-import utils.FutureUtils._
 import utils.bodyparser.JsonParser
 
-import scala.concurrent.Future
 import scala.language.implicitConversions
 
 class AuthRest @Inject()(
@@ -54,14 +53,14 @@ class AuthRest @Inject()(
 
   def loginInfo(email: String) = LoginInfo(CredentialsProvider.ID, email)
 
-  def signUp = Action.async(JsonParser.successWith(newUserCredentialsRead)) { request =>
+  def signUp = Action.async(JsonParser.successWith(newUserCredentialsRead)) { implicit request =>
       request.body
       .zipMap(userService.saveNewUser)
       .flatMap{case (p,u) => authInfoRepository.save(p.loginInfo, p.passwordInfo.get).map(_ => (p,u))}
       .flatMap{case (p,u) => userTokenService.save(UserToken.create(u.id, p.email.get, true)).map(t => (p,u,t))}
+      .flatMap{case (p,u,t) => mailer.welcome(p, link = routes.Auth.signUp(t.id.toString).absoluteURL())}
       .map(_ => Ok)
   }
-
 
   def signIn = Action.async(JsonParser.success[Credentials]) { implicit request =>
       request.body

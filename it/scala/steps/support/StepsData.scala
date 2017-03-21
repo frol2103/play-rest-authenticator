@@ -2,6 +2,7 @@ package steps.support
 import java.net.HttpCookie
 
 import play.api.libs.json.{JsValue, Json}
+import steps.support.mailhog.Mail
 
 import scalaj.http.HttpResponse;
 
@@ -13,6 +14,7 @@ object StepsData
 
   var _response: HttpResponse[_] = null
   var cookies: Seq[HttpCookie] = Seq()
+  var email: Mail = null
 
   def response = _response
 

@@ -13,3 +13,9 @@ services:
       - 9000:9000
     command: activator run
     stdin_open: true
+
+  smtp:
+    image: mailhog/mailhog
+    ports:
+      - 1025
+      - 8025
