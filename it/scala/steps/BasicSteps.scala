@@ -1,17 +1,15 @@
 package steps
 
-import com.google.inject.Inject
-import cucumber.api.scala.{EN, ScalaDsl}
-import org.scalatest.Matchers
-import play.api.libs.json.{JsArray, JsString, Json}
-import play.api.mvc.BodyParsers
-import steps.support.{Config, StepsData}
-import utils.bodyparser.JsonParser
+import cucumber.api.java.Before
 import play.api.libs.json.JsValue._
-
-import scalaj.http.Http
+import play.api.libs.json.{JsString, Json}
 
 class BasicSteps extends Steps{
+
+  @Before
+  def beforeHook(): Unit = {
+    stepsData.reset()
+  }
 
   When("""^a request is made to the (.*) endpoint$""") {( endpoint: String) =>
     stepsData.response = http(endpoint).asString

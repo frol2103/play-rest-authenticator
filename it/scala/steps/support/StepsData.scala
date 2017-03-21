@@ -18,9 +18,13 @@ object StepsData
 
   def response_=(r: HttpResponse[_]) = {
     this._response = r
-    this.cookies = r.cookies
+    Option(r).foreach(resp => this.cookies = resp.cookies)
   }
 
+  def reset() {
+    this.cookies = Seq()
+    this.response = null
+  }
 
   def responseJsonBody : JsValue= {
     Option(response)
