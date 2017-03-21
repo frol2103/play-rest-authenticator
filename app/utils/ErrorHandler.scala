@@ -14,7 +14,7 @@ import play.api.{Configuration, OptionalSourceMapper}
 
 import scala.concurrent.Future
 import controllers.routes
-import errors.AuthenticationException
+import errors.{AuthenticationException, UnauthorizedException}
 import errors.AuthenticationException._
 import org.slf4j.LoggerFactory
 import play.api.libs.json.Json
@@ -42,6 +42,7 @@ class ErrorHandler @Inject() (
     val uuid = UUID.randomUUID()
     ErrorHandler.logger.error("Error " + uuid  + " : " + exception.getMessage, exception )
     Future.successful(exception match {
+      case e : UnauthorizedException => Unauthorized(toJsonWithUUID(uuid, e))
       case e : AuthenticationException => BadRequest(toJsonWithUUID(uuid, e))
       case e @(_: IdentityNotFoundException | _:InvalidPasswordException) => BadRequest(toJsonWithUUID(uuid,
         new AuthenticationException("INVALID_CREDENTIALS", "Invalid credentials", Some(e))))

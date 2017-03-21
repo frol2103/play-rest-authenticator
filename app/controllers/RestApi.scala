@@ -3,16 +3,15 @@ package controllers
 import javax.inject.Inject
 
 import scala.concurrent.Future
-
-import com.mohiva.play.silhouette.api.{Environment,Silhouette}
+import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
-
 import play.api._
 import play.api.libs.json._
 import play.api.mvc._
-import play.api.i18n.{I18nSupport,MessagesApi,Messages}
-
-import models.User, User._
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import models.User
+import User._
+import errors.{AuthenticationException, UnauthorizedException}
 
 class RestApi @Inject() (
   val messagesApi: MessagesApi, 
@@ -31,6 +30,6 @@ class RestApi @Inject() (
   }
 
   override def onNotAuthenticated(request:RequestHeader) = {
-    Some(Future.successful(Unauthorized(Json.obj("errors" -> Messages("error.profileUnauth")))))
+    throw new UnauthorizedException("Unauthorized")
   }
 }

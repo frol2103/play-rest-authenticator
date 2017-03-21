@@ -33,3 +33,8 @@ Feature: Signup to the application with user password
 		Given I signin with email wrong_password@test.com and password test_wrong
 		Then a 400 status code is received
 		And an INVALID_CREDENTIALS error should be thrown
+
+	Scenario: Ask for profile before signin
+		When I ask for the current profile
+		Then a 401 status code is received
+		And an UNAUTHORIZED_EXCEPTION error should be thrown
