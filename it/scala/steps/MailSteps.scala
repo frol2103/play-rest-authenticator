@@ -27,6 +27,13 @@ class MailSteps extends Steps {
     stepsData.email = sentMail.get
   }
 
+  When("""^I visit the link in the mail$"""){ () =>
+    val link = """href="(.*)"""".r.findFirstMatchIn(stepsData.email.body)
+    link.isDefined should be(true)
+    stepsData.response = Http(link.get.group(1)).asString
+  }
+
+
 
 }
 

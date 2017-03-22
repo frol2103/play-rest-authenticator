@@ -1,5 +1,6 @@
 package controllers
 
+import java.util.UUID
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -8,6 +9,7 @@ import com.mohiva.play.silhouette.api.util.{Credentials, PasswordHasher}
 import com.mohiva.play.silhouette.api.{Environment, LoginInfo, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.providers._
+import errors.AuthenticationException
 import models.{Profile, User, UserToken}
 import play.api.Configuration
 import play.api.i18n.MessagesApi
@@ -22,6 +24,7 @@ import utils.Mailer
 import utils.Utils._
 import utils.bodyparser.JsonParser
 
+import scala.concurrent.Future
 import scala.language.implicitConversions
 
 class AuthRest @Inject()(
@@ -43,7 +46,7 @@ class AuthRest @Inject()(
       (JsPath \ "email").read[String](minLength[String](2)) and
       (JsPath \ "password").read[String](minLength[String](2))
     ) ((firstname, lastname, email, password) => new Profile(
-    loginInfo(email), true, email.toOpt,
+    loginInfo(email), false, email.toOpt,
     firstname.toOpt, lastname.toOpt, None,
     passwordHasher.hash(password).toOpt,
     None)
@@ -77,4 +80,21 @@ class AuthRest @Inject()(
   }
 
 
+  def confirm(tokenId: String) = Action.async { implicit request =>
+    Future.successful(UUID.fromString(tokenId))
+      .flatMap(userTokenService.find)
+      .flatMap(topt => topt.map(t => userService.find(t.userId).map(_.map(t -> _))).getOrElse(Future.successful(None)))
+      .map {
+        case None => throw new AuthenticationException("TOKEN_ERROR", "wrong token")
+        case Some((token, u)) => {
+          userTokenService.remove(token.id)
+          if (token.isSignUp && !token.isExpired) {
+            userService.confirm(loginInfo(token.email))
+            Ok
+          } else {
+            throw new AuthenticationException("EXPIRED_TOKEN", "expired token")
+          }
+        }
+      }
+  }
 }

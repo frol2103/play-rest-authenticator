@@ -4,6 +4,8 @@ Feature: Signup to the application with user password
 		Given I signup with email signup.correct@test.com password test firstname foo and lastname bar
 		Then a 200 status code is received
 		And a mail should have been sent to signup.correct@test.com
+		When I visit the link in the mail
+		Then a 200 status code is received
 		Given I signin with email signup.correct@test.com and password test
 		Then a 200 status code is received
 		When I ask for the current profile

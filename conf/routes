@@ -11,6 +11,7 @@ GET     /auth/signup/:token         controllers.Auth.signUp(token:String)
 PUT     /rest/auth/signup           controllers.AuthRest.signUp
 POST    /rest/auth/signin           controllers.AuthRest.signIn
 GET     /rest/auth/profile          controllers.RestApi.profile
+GET     /rest/auth/signup/:token    controllers.AuthRest.confirm(token)
 
 GET     /auth/signin                controllers.Auth.signIn
 POST    /auth/authenticate          controllers.Auth.authenticate
