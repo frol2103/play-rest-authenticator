@@ -16,8 +16,7 @@ import play.modules.reactivemongo.json.collection.JSONCollection
 
 import models.User, User._
 
-class PasswordInfoDao extends DelegableAuthInfoDAO[PasswordInfo] {
-  lazy val reactiveMongoApi = current.injector.instanceOf[ReactiveMongoApi]
+class PasswordInfoDao extends DelegableAuthInfoDAO[PasswordInfo] with MongoPlayAppDao{
   val users = reactiveMongoApi.db.collection[JSONCollection]("users")
 
   def find(loginInfo:LoginInfo):Future[Option[PasswordInfo]] = for {

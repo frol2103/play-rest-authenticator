@@ -26,8 +26,7 @@ trait UserDao {
   def update(profile:Profile):Future[User]
 }
 
-class MongoUserDao extends UserDao {
-  lazy val reactiveMongoApi = current.injector.instanceOf[ReactiveMongoApi]
+class MongoUserDao extends UserDao with MongoPlayAppDao{
   val users = reactiveMongoApi.db.collection[JSONCollection]("users")
 
   def find(loginInfo:LoginInfo):Future[Option[User]] = 

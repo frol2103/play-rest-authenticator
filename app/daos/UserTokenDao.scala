@@ -20,8 +20,7 @@ trait UserTokenDao {
   def remove(id:UUID):Future[Unit]
 }
 
-class MongoUserTokenDao extends UserTokenDao {
-  lazy val reactiveMongoApi = current.injector.instanceOf[ReactiveMongoApi]
+class MongoUserTokenDao extends UserTokenDao with MongoPlayAppDao{
   val tokens = reactiveMongoApi.db.collection[JSONCollection]("tokens")
 
   def find(id:UUID):Future[Option[UserToken]] = 
