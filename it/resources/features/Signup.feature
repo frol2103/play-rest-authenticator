@@ -13,6 +13,13 @@ Feature: Signup to the application with user password
 		And repsonse should have .firstName equals to foo
 
 
+	Scenario: Signin with not confirmed user
+		Given I signup with email not_confirmed_user@test.com and password test
+		Then a 200 status code is received
+		Given I signin with email not_confirmed_user@test.com and password test
+		Then a 400 status code is received
+		Then a USER_NOT_CONFIRMED error should be thrown
+
 	Scenario: Signup when user already exists
 		Given I signup with email signup.already_exist@test.com and password test1
 		Then a 200 status code is received

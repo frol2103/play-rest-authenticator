@@ -9,7 +9,7 @@ import com.mohiva.play.silhouette.api.util.{Credentials, PasswordHasher}
 import com.mohiva.play.silhouette.api.{Environment, LoginInfo, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.providers._
-import errors.AuthenticationException
+import errors.{AuthenticationException, InvalidCredentialsException}
 import models.{Profile, User, UserToken}
 import play.api.Configuration
 import play.api.i18n.MessagesApi
@@ -70,8 +70,8 @@ class AuthRest @Inject()(
       .flatMap(credentialsProvider.authenticate)
       .zipMap(userService.retrieve)
       .map {
-        case (_,None) => throw new RuntimeException("Incorrect Credentials")
-        case (li,Some(user)) if !user.profileFor(li).map(_.confirmed).getOrElse(false) => throw new RuntimeException("not confirmed")
+        case (_,None) => throw new InvalidCredentialsException("Invalid credentials")
+        case (li,Some(user)) if !user.profileFor(li).map(_.confirmed).getOrElse(false) => throw new AuthenticationException("USER_NOT_CONFIRMED","The user is not confirmed")
         case (li,_) => li
       }
       .flatMap(env.authenticatorService.create(_))
