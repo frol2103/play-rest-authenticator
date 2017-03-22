@@ -22,3 +22,14 @@ Feature: To guarantee the email enterred by the user is correct,
     Given I signin with email wrong_signup_token@test.com and password test
     Then a 400 status code is received
     Then a USER_NOT_CONFIRMED error should be thrown
+
+  Scenario: confirm with a outdated token
+    Given I signup with email outdated_token@test.com and password test
+    And the signup token for outdated_token@test.com expired yesterday
+    And a mail should have been sent to outdated_token@test.com
+    When I visit the link in the mail
+    Then a 400 status code is received
+    Then a EXPIRED_TOKEN error should be thrown
+    Given I signin with email outdated_token@test.com and password test
+    Then a 400 status code is received
+    Then a USER_NOT_CONFIRMED error should be thrown
