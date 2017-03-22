@@ -27,13 +27,22 @@ class MailSteps extends Steps {
     stepsData.email = sentMail.get
   }
 
-  When("""^I visit the link in the mail$"""){ () =>
-    val link = """href="(.*)"""".r.findFirstMatchIn(stepsData.email.body)
-    link.isDefined should be(true)
-    stepsData.response = Http(link.get.group(1)).asString
+  When("""^I visit the link in the mail$""") { () =>
+    stepsData.response = Http(linkInMail).asString
+  }
+
+  When("""^I visit the link in the mail with altered last char$""") {
+    val link = linkInMail
+    val alteredLink = link.dropRight(1) + (if (link.takeRight(1) == "a") "b" else "a")
+    stepsData.response = Http(alteredLink).asString
   }
 
 
+  private def linkInMail = {
+    """href="(.*)"""".r.findFirstMatchIn(stepsData.email.body)
+      .getOrElse(throw new RuntimeException("No link found in the mail"))
+      .group(1)
+  }
 
 }
 

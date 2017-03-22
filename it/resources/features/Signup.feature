@@ -20,6 +20,17 @@ Feature: Signup to the application with user password
 		Then a 400 status code is received
 		Then a USER_NOT_CONFIRMED error should be thrown
 
+	Scenario: confirm with a wrong token
+		Given I signup with email wrong_signup_token@test.com and password test
+		Then a 200 status code is received
+		And a mail should have been sent to wrong_signup_token@test.com
+		When I visit the link in the mail with altered last char
+		Then a 400 status code is received
+		Then a TOKEN_ERROR error should be thrown
+		Given I signin with email wrong_signup_token@test.com and password test
+		Then a 400 status code is received
+		Then a USER_NOT_CONFIRMED error should be thrown
+
 	Scenario: Signup when user already exists
 		Given I signup with email signup.already_exist@test.com and password test1
 		Then a 200 status code is received
