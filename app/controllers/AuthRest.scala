@@ -61,7 +61,7 @@ class AuthRest @Inject()(
       .zipMap(userService.saveNewUser)
       .flatMap{case (p,u) => authInfoRepository.save(p.loginInfo, p.passwordInfo.get).map(_ => (p,u))}
       .flatMap{case (p,u) => userTokenService.save(UserToken.create(u.id, p.email.get, true)).map(t => (p,u,t))}
-      .flatMap{case (p,u,t) => mailer.welcome(p, link = routes.Auth.signUp(t.id.toString).absoluteURL())}
+      .flatMap{case (p,u,t) => mailer.welcome(p, link = routes.AuthRest.confirm(t.id.toString).absoluteURL())}
       .map(_ => Ok)
   }
 
