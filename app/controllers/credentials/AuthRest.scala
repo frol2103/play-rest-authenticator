@@ -34,9 +34,7 @@ class AuthRest @Inject()(
                           credentialsProvider: CredentialsProvider,
                           userService: UserService,
                           userTokenService: UserTokenService,
-                          avatarService: AvatarService,
                           passwordHasher: PasswordHasher,
-                          configuration: Configuration,
                           mailer: Mailer) extends Silhouette[User,CookieAuthenticator] {
 
 
