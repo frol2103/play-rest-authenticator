@@ -35,7 +35,7 @@ class AuthRest @Inject()(
                           userService: UserService,
                           userTokenService: UserTokenService,
                           passwordHasher: PasswordHasher,
-                          mailer: Mailer) extends Silhouette[User,CookieAuthenticator] {
+                          mailer: Mailer) extends Silhouette[User,CookieAuthenticator] with CredentialsAction{
 
 
   implicit val newUserCredentialsRead: Reads[Profile] = (
@@ -51,8 +51,6 @@ class AuthRest @Inject()(
   )
 
   implicit val credentialsFormat = Json.format[Credentials]
-
-  def loginInfo(email: String) = LoginInfo(CredentialsProvider.ID, email)
 
   def signUp = Action.async(JsonParser.successWith(newUserCredentialsRead)) { implicit request =>
       request.body

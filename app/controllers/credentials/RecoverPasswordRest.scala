@@ -2,9 +2,8 @@ package controllers.credentials
 
 import javax.inject.Inject
 
-import com.mohiva.play.silhouette.api.{Environment, LoginInfo, Silhouette}
+import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
-import com.mohiva.play.silhouette.impl.providers._
 import errors.AuthenticationException
 import models.{User, UserToken}
 import play.api.i18n.MessagesApi
@@ -25,13 +24,13 @@ class RecoverPasswordRest @Inject()(
                                      val messagesApi: MessagesApi,
                                      userService: UserService,
                                      userTokenService: UserTokenService,
-                                     mailer: Mailer) extends Silhouette[User, CookieAuthenticator] {
+                                     mailer: Mailer) extends Silhouette[User, CookieAuthenticator] with CredentialsAction {
 
   val emailReads = (JsPath \ "email").read[String]
 
   def initToken = Action.async(JsonParser.successWith(emailReads)) { implicit request =>
     request.body
-      .zipMap(email => userService.retrieve(LoginInfo(CredentialsProvider.ID, email)))
+      .zipMap(email => userService.retrieve(loginInfo(email)))
       .flatMap {
         case (_, None) => throw new AuthenticationException("UNKNOWN_EMAIL", "unknown email")
         case (email, Some(user)) => userTokenService.save(UserToken.create(user.id, email, isSignUp = false))
@@ -41,7 +40,7 @@ class RecoverPasswordRest @Inject()(
       .map(_ => Ok)
   }
 
-  def resetPassword(token:String) = Action.async(
+  def resetPassword(token: String) = Action.async(
     Future.failed(new RuntimeException("not implemented"))
   )
 
