@@ -1,22 +1,30 @@
 package steps
 
-import play.api.libs.json.{JsPath, JsString, Json}
+import play.api.libs.json.{JsPath, JsString}
 import utils.JsonUtils._
+import utils.MailUtils
 
-class SignupSteps extends Steps {
+import scalaj.http.Http
+
+class SignupSteps extends Steps with MailUtils{
 
 
   Given("""I signup with email (.*) and password (.*)$"""){(email:String, password:String) =>
     signup(email, password)
   }
 
-  private def signup(email: String, password: String, firstname: String = "foo", lastname: String = "bar") = {
+  private def signup(email: String, password: String = "testPassword", firstname: String = "foo", lastname: String = "bar") = {
     stepsData.response = http("/rest/auth/signup").put(
       json("firstname" -> firstname,
         "lastname" -> lastname,
         "email" -> parse(email),
         "password" -> parse(password))
     ).asString
+  }
+
+  Given("""^I am a registered user with email (.*)$"""){(email :String) =>
+    signup(email)
+    Http(linkInMail(mailFor(email).get)).asString.code should be(200)
   }
 
   Given("""I signup with email (.*) password (.*) firstname (.*) and lastname (.*)""") {

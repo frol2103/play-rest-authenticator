@@ -12,6 +12,7 @@ PUT     /rest/auth/signup           controllers.AuthRest.signUp
 POST    /rest/auth/signin           controllers.AuthRest.signIn
 GET     /rest/auth/profile          controllers.RestApi.profile
 GET     /rest/auth/signup/:token    controllers.AuthRest.confirm(token)
+POST    /rest/auth/initRecovery     controllers.RecoverPasswordRest.initToken
 
 GET     /auth/signin                controllers.Auth.signIn
 POST    /auth/authenticate          controllers.Auth.authenticate
