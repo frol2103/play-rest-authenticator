@@ -1,8 +1,7 @@
-package steps
+package steps.credentials
 
+import steps.Steps
 import utils.MailUtils
-
-import scalaj.http.Http
 
 
 class RecoverPasswordSteps extends Steps with MailUtils {

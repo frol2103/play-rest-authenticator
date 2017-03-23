@@ -1,6 +1,7 @@
-package steps
+package steps.credentials
 
 import play.api.libs.json.{JsPath, JsString}
+import steps.Steps
 import utils.JsonUtils._
 import utils.MailUtils
 
