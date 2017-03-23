@@ -1,4 +1,4 @@
-package controllers
+package controllers.credentials
 
 import javax.inject.Inject
 
@@ -17,6 +17,7 @@ import utils.FutureUtils._
 import utils.Mailer
 import utils.bodyparser.JsonParser
 
+import scala.concurrent.Future
 import scala.language.implicitConversions
 
 class RecoverPasswordRest @Inject()(
@@ -36,8 +37,12 @@ class RecoverPasswordRest @Inject()(
         case (email, Some(user)) => userTokenService.save(UserToken.create(user.id, email, isSignUp = false))
           .map(email -> _)
       }
-      .flatMap { case (email, token) => mailer.resetPassword(email, link = routes.Auth.resetPassword(token.id.toString).absoluteURL()) }
+      .flatMap { case (email, token) => mailer.resetPassword(email, link = routes.RecoverPasswordRest.resetPassword(token.id.toString).absoluteURL()) }
       .map(_ => Ok)
   }
+
+  def resetPassword(token:String) = Action.async(
+    Future.failed(new RuntimeException("not implemented"))
+  )
 
 }
