@@ -15,7 +15,6 @@ class LdapSteps extends Steps {
     entry.put(new BasicAttribute("cn", "Test User2"))
     entry.put(new BasicAttribute("sn", "Test2"))
     entry.put(new BasicAttribute("mail", email))
-    entry.put(new BasicAttribute("telephoneNumber", "+1 222 3334444"))
     entry.put(new BasicAttribute("userPassword", "{MD5}" + digest("MD5",password)))
     entry.put{
       val oc = new BasicAttribute("objectClass");
