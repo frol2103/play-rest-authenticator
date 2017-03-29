@@ -19,3 +19,11 @@ services:
     ports:
       - 1025
       - 8025
+
+  ldap:
+    image: dinkel/openldap
+    ports:
+      - 389
+    environment:
+      - SLAPD_PASSWORD=mysecretpassword
+      - SLAPD_DOMAIN=ldap.example.org
