@@ -9,14 +9,23 @@ import steps.support.LdapUtils._
   */
 class LdapSteps extends Steps {
 
-  Given("""^there is a user in ldap with email (.*) and password (.*)$""") { (email: String, password:String) =>
+  Given("""^there is a user in ldap with email (.*) and password (.*)$""") { (email: String, password: String) =>
+    addEntry(email, password)
+  }
 
+  Given("""^there is a user in ldap with email (.*) password (.*) firstname (.*) and lastname (.*)$""") {
+    (email: String, password: String, firstname: String, lastname: String) =>
+      addEntry(email, password, firstname, lastname)
+  }
+
+  private def addEntry(email: String, password: String, firstname: String = "Foo", lastname: String = "Bar") = {
     val entry = new BasicAttributes()
-    entry.put(new BasicAttribute("cn", "Test User2"))
-    entry.put(new BasicAttribute("sn", "Test2"))
+    entry.put(new BasicAttribute("cn", firstname + " " + lastname))
+    entry.put(new BasicAttribute("sn", lastname))
+    entry.put(new BasicAttribute("givenName", firstname))
     entry.put(new BasicAttribute("mail", email))
-    entry.put(new BasicAttribute("userPassword", "{MD5}" + digest("MD5",password)))
-    entry.put{
+    entry.put(new BasicAttribute("userPassword", "{MD5}" + digest("MD5", password)))
+    entry.put {
       val oc = new BasicAttribute("objectClass");
       List("top", "person", "organizationalPerson", "inetOrgPerson")
         .foreach(oc.add)

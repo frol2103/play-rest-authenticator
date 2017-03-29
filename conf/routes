@@ -13,6 +13,8 @@ POST    /rest/auth/signin           controllers.AuthRest.signIn
 GET     /rest/auth/profile          controllers.RestApi.profile
 GET     /rest/auth/signup/:token    controllers.AuthRest.confirm(token)
 
+POST    /rest/auth/ldap/signin           controllers.AuthLdapRest.signIn
+
 GET     /auth/signin                controllers.Auth.signIn
 POST    /auth/authenticate          controllers.Auth.authenticate
 GET     /auth/signout               controllers.Auth.signOut
