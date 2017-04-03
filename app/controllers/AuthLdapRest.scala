@@ -17,6 +17,7 @@ import play.api.i18n.MessagesApi
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc._
+import providers.LdapProvider
 import services.{UserService, UserTokenService}
 import utils.Mailer
 import utils.bodyparser.JsonParser
@@ -26,6 +27,7 @@ import scala.language.implicitConversions
 class AuthLdapRest @Inject()(
                               val messagesApi: MessagesApi,
                               val env: Environment[User, CookieAuthenticator],
+                              ldapProvider: LdapProvider,
                               authInfoRepository: AuthInfoRepository,
                               credentialsProvider: CredentialsProvider,
                               userService: UserService,
@@ -47,38 +49,7 @@ class AuthLdapRest @Inject()(
   def signIn = Action.async(JsonParser.success[Credentials]) { implicit request =>
     request.body
       .map { credentials =>
-
-        val env = Map(
-          Context.INITIAL_CONTEXT_FACTORY -> "com.sun.jndi.ldap.LdapCtxFactory",
-          Context.PROVIDER_URL -> "ldap://ldap:389",
-          Context.SECURITY_AUTHENTICATION -> "simple",
-          Context.SECURITY_PRINCIPAL -> "cn=admin,dc=ldap,dc=example,dc=org",
-          Context.SECURITY_CREDENTIALS -> "mysecretpassword"
-        )
-        val ctx = new InitialDirContext(toHashtable(env))
-        "name:" + ctx.getNameInNamespace
-
-
-        val ctrls = new SearchControls();
-        ctrls.setReturningAttributes(Array("givenName", "sn", "cn", "givenName", "memberOf", "mail"));
-        ctrls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
-        val answers = ctx.search("dc=ldap,dc=example,dc=org", "(mail=" + credentials.identifier + ")", ctrls);
-        val result = answers.nextElement();
-
-        val user = result.getNameInNamespace();
-
-
-        val userEnv = Map(
-          Context.INITIAL_CONTEXT_FACTORY -> "com.sun.jndi.ldap.LdapCtxFactory",
-          Context.PROVIDER_URL -> "ldap://ldap:389",
-          Context.SECURITY_AUTHENTICATION -> "simple",
-          Context.SECURITY_PRINCIPAL -> user,
-          Context.SECURITY_CREDENTIALS -> credentials.password
-        )
-        new InitialDirContext(toHashtable(userEnv));
-
-        result.getAttributes
+        ldapProvider.authenticate(credentials)
       }
       .map(v => Ok(v.toString))
   }
