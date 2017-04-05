@@ -28,15 +28,6 @@ class ErrorHandler @Inject() (
   extends DefaultHttpErrorHandler(env, config, sourceMapper, router)
   with SecuredErrorHandler with I18nSupport {
 
-  override def onNotAuthenticated(request: RequestHeader, messages: Messages): Option[Future[Result]] =
-    Some(Future.successful(Redirect(routes.Auth.signIn())))
-
-  override def onNotAuthorized(request: RequestHeader, messages: Messages): Option[Future[Result]] =
-    Some(Future.successful(Redirect(routes.Auth.signIn()).flashing("errors" -> Messages("error.accessDenied")(messages))))
-
-  override def onNotFound(request: RequestHeader, message: String): Future[Result] = {
-    Future.successful(NotFound(views.html.errors.notFound(request)))
-  }
 
   override def onServerError(request:RequestHeader, exception:Throwable):Future[Result] = {
     val uuid = UUID.randomUUID()
