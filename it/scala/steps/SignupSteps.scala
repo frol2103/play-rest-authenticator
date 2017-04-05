@@ -1,7 +1,7 @@
 package steps
 
 import play.api.libs.json.{JsPath, JsString, Json}
-import utils.JsonUtils._
+import be.frol.playrestauthenticator.utils.JsonUtils._
 
 class SignupSteps extends Steps {
 

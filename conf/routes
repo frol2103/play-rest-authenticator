@@ -1,11 +1,11 @@
 
-PUT     /rest/auth/signup           controllers.AuthRest.signUp
-POST    /rest/auth/signin           controllers.AuthRest.signIn
-GET     /rest/auth/profile          controllers.RestApi.profile
-GET     /rest/auth/signup/:token    controllers.AuthRest.confirm(token)
+PUT     /rest/auth/signup           be.frol.playrestauthenticator.controllers.AuthRest.signUp
+POST    /rest/auth/signin           be.frol.playrestauthenticator.controllers.AuthRest.signIn
+GET     /rest/auth/profile          be.frol.playrestauthenticator.controllers.RestApi.profile
+GET     /rest/auth/signup/:token    be.frol.playrestauthenticator.controllers.AuthRest.confirm(token)
 
 
-GET     /alive                      controllers.AliveController.alive
+GET     /alive                      be.frol.playrestauthenticator.controllers.AliveController.alive
 
 # Public assets
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
