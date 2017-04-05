@@ -1,7 +1,6 @@
 package module
 
 import com.google.inject.{AbstractModule, Provides}
-
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services._
 import com.mohiva.play.silhouette.api.util._
@@ -24,6 +23,7 @@ import play.api.Configuration
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.mailer.MailerClient
 import play.api.libs.ws.WSClient
+import providers.{LdapInfo, LdapProvider}
 import services.UserService
 import utils.Mailer
 
@@ -35,6 +35,7 @@ class Module extends AbstractModule with ScalaModule {
     bind[UserTokenDao].to[MongoUserTokenDao]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDao]
     bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDao]
+    bind[DelegableAuthInfoDAO[LdapInfo]].to[LdapInfoDao]
     bind[IDGenerator].toInstance(new SecureRandomIDGenerator())
     bind[PasswordHasher].toInstance(new BCryptPasswordHasher)
     bind[FingerprintGenerator].toInstance(new DefaultFingerprintGenerator(false))
@@ -46,7 +47,7 @@ class Module extends AbstractModule with ScalaModule {
   def provideHTTPLayer(client: WSClient): HTTPLayer = new PlayHTTPLayer(client)
 
   @Provides
-  def provideMailer(configuration:Configuration, mailerClient:MailerClient) = 
+  def provideMailer(configuration:Configuration, mailerClient:MailerClient) =
     new Mailer(configuration, mailerClient)
 
   @Provides
@@ -88,11 +89,19 @@ class Module extends AbstractModule with ScalaModule {
   }
 
   @Provides
+  def provideLdapProvider(
+                           authInfoRepository: AuthInfoRepository
+                         ) : LdapProvider = {
+    new LdapProvider(authInfoRepository)
+  }
+
+  @Provides
   def provideAuthInfoRepository(
     passwordInfoDAO: DelegableAuthInfoDAO[PasswordInfo],
-    oauth1InfoDAO: DelegableAuthInfoDAO[OAuth1Info]): AuthInfoRepository = {
+    oauth1InfoDAO: DelegableAuthInfoDAO[OAuth1Info],
+    ldapInfoDao:DelegableAuthInfoDAO[LdapInfo]): AuthInfoRepository = {
 
-    new DelegableAuthInfoRepository(passwordInfoDAO, oauth1InfoDAO)
+    new DelegableAuthInfoRepository(passwordInfoDAO, oauth1InfoDAO, ldapInfoDao)
   }
 
   @Provides

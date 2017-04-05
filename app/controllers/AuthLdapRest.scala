@@ -48,7 +48,7 @@ class AuthLdapRest @Inject()(
 
   def signIn = Action.async(JsonParser.success[Credentials]) { implicit request =>
     request.body
-      .map { credentials =>
+      .flatMap { credentials =>
         ldapProvider.authenticate(credentials)
       }
       .map(v => Ok(v.toString))

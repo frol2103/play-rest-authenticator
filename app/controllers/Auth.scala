@@ -108,7 +108,8 @@ class Auth @Inject() (
               lastName = Some(signUpData.lastName), 
               fullName = Some(s"${signUpData.firstName} ${signUpData.lastName}"),
               passwordInfo = None, 
-              oauth1Info = None)
+              oauth1Info = None,
+              ldapInfo = None)
             for {
               avatarUrl <- avatarService.retrieveURL(signUpData.email)
               user <- userService.save(User(id = UUID.randomUUID(), profiles = List(profile)))

@@ -55,6 +55,7 @@ class UserService @Inject() (userDao:UserDao) extends IdentityService[User] {
     lastName = p.lastName,
     fullName = p.fullName,
     passwordInfo = None,
-    oauth1Info = None
+    oauth1Info = None,
+    ldapInfo = None
   )
 }

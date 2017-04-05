@@ -49,6 +49,7 @@ class AuthRest @Inject()(
     loginInfo(email), false, email.toOpt,
     firstname.toOpt, lastname.toOpt, None,
     passwordHasher.hash(password).toOpt,
+    None,
     None)
   )
 

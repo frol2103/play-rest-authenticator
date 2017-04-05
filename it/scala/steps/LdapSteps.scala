@@ -18,6 +18,13 @@ class LdapSteps extends Steps {
       addEntry(email, password, firstname, lastname)
   }
 
+  Given("""I signin with ldap email (.*) and password (.*)$"""){(email:String, password:String) =>
+    stepsData.response = http("/rest/auth/ldap/signin").postData(
+      json("identifier"->parse(email),
+        "password"->parse(password))
+    ).asString
+  }
+
   private def addEntry(email: String, password: String, firstname: String = "Foo", lastname: String = "Bar") = {
     val entry = new BasicAttributes()
     entry.put(new BasicAttribute("cn", firstname + " " + lastname))

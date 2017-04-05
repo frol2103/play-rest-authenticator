@@ -3,10 +3,10 @@ package models
 import java.util.UUID
 
 import play.api.libs.json.Json
-
 import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
 import com.mohiva.play.silhouette.api.util.PasswordInfo
 import com.mohiva.play.silhouette.impl.providers.OAuth1Info
+import providers.LdapInfo
 import utils.Utils._
 case class Profile(
   loginInfo:LoginInfo,
@@ -16,7 +16,8 @@ case class Profile(
   lastName: Option[String],
   fullName: Option[String], 
   passwordInfo:Option[PasswordInfo], 
-  oauth1Info: Option[OAuth1Info]) {
+  oauth1Info: Option[OAuth1Info],
+  ldapInfo: Option[LdapInfo]) {
 }
 
 case class User(id: UUID, profiles: List[Profile]) extends Identity {
@@ -27,6 +28,7 @@ case class User(id: UUID, profiles: List[Profile]) extends Identity {
 object User {
   implicit val passwordInfoJsonFormat = Json.format[PasswordInfo]
   implicit val oauth1InfoJsonFormat = Json.format[OAuth1Info]
+  implicit val ldapInfoJsonFormat = Json.format[LdapInfo]
   implicit val profileJsonFormat = Json.format[Profile]
   implicit val userJsonFormat = Json.format[User]
 }
