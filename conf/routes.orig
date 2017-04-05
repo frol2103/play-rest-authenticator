@@ -1,0 +1,34 @@
+
+PUT     /rest/auth/signup           be.frol.playrestauthenticator.controllers.AuthRest.signUp
+POST    /rest/auth/signin           be.frol.playrestauthenticator.controllers.AuthRest.signIn
+GET     /rest/auth/profile          be.frol.playrestauthenticator.controllers.RestApi.profile
+GET     /rest/auth/signup/:token    be.frol.playrestauthenticator.controllers.AuthRest.confirm(token)
+
+
+<<<<<<< HEAD
+PUT     /rest/auth/signup           controllers.AuthRest.signUp
+POST    /rest/auth/signin           controllers.AuthRest.signIn
+GET     /rest/auth/profile          controllers.RestApi.profile
+GET     /rest/auth/signup/:token    controllers.AuthRest.confirm(token)
+
+POST    /rest/auth/ldap/signin           controllers.AuthLdapRest.signIn
+
+GET     /auth/signin                controllers.Auth.signIn
+POST    /auth/authenticate          controllers.Auth.authenticate
+GET     /auth/signout               controllers.Auth.signOut
+
+GET     /auth/reset                 controllers.Auth.startResetPassword
+POST    /auth/reset                 controllers.Auth.handleStartResetPassword
+GET     /auth/reset/:token          controllers.Auth.resetPassword(token:String)
+POST    /auth/reset/:token          controllers.Auth.handleResetPassword(token:String)
+
+GET     /auth/social/:providerId    controllers.Auth.socialAuthenticate(providerId:String)
+
+GET     /alive                      controllers.AliveController.alive
+=======
+GET     /alive                      be.frol.playrestauthenticator.controllers.AliveController.alive
+>>>>>>> refactoring
+
+# Public assets
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET     /webjars/*file              controllers.WebJarAssets.at(file)

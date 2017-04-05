@@ -2,7 +2,7 @@ package steps
 
 import play.api.libs.json.Json
 import steps.support.mailhog.Mail
-import utils.JsonUtils._
+import be.frol.playrestauthenticator.utils.JsonUtils._
 
 import scalaj.http.Http
 

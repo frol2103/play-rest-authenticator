@@ -1,6 +1,6 @@
 package steps
 
-import daos.MongoUserTokenDao
+import be.frol.playrestauthenticator.daos.MongoUserTokenDao
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import play.api.test.Helpers._

@@ -24,7 +24,7 @@ dialog.email=Email
 dialog.firstName=First name
 dialog.lastName=Last name
 dialog.fullName=Full name
-dialog.available=Available authentication providers
+dialog.available=Available authentication be.frol.playrestauthenticator.providers
 dialog.none=None
 
 profile.title=My profile
@@ -32,8 +32,8 @@ profile.firstName=First name
 profile.lastName=Last name
 profile.fullName=Full name
 profile.email=Email
-profile.linked=Linked authentication providers
-profile.available=Available authentication providers
+profile.linked=Linked authentication be.frol.playrestauthenticator.providers
+profile.available=Available authentication be.frol.playrestauthenticator.providers
 profile.none=None
 
 signup.title=Sign up
