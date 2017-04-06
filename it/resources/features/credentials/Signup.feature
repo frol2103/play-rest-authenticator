@@ -30,7 +30,7 @@ Feature: Signup to the application with user password
 		Then a 400 status code is received
 		And an INVALID_CREDENTIALS error should be thrown
 
-	Scenario: Try to signup with a wrong password
+	Scenario: Try to signin with a wrong password
 		Given I signup with email wrong_password@test.com and password test
 		Given I signin with email wrong_password@test.com and password test_wrong
 		Then a 400 status code is received

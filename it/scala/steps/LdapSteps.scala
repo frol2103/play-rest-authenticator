@@ -39,7 +39,7 @@ class LdapSteps extends Steps {
       oc
     }
 
-    val result = ldapDirContext.createSubcontext("uid=user1,dc=ldap,dc=example,dc=org", entry)
+    val result = ldapDirContext.createSubcontext("uid="+email.takeWhile(_ != '@')+",dc=ldap,dc=example,dc=org", entry)
   }
 
   private def ldapDirContext = {

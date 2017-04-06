@@ -24,11 +24,12 @@ import javax.inject.Inject
 import javax.naming.Context
 import javax.naming.directory.{InitialDirContext, SearchControls}
 
+import be.frol.playrestauthenticator.errors.AuthenticationException
 import be.frol.playrestauthenticator.models.Profile
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.{Credentials, ExecutionContextProvider, PasswordHasher}
-import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
+import com.mohiva.play.silhouette.impl.exceptions.{IdentityNotFoundException, InvalidPasswordException}
 import be.frol.playrestauthenticator.providers.LdapProvider._
 import be.frol.playrestauthenticator.services.UserService
 
@@ -108,7 +109,11 @@ class LdapProvider @Inject()(
       Context.SECURITY_PRINCIPAL -> principal,
       Context.SECURITY_CREDENTIALS -> password
     )
-    new InitialDirContext(toHashtable(env))
+    try{
+      new InitialDirContext(toHashtable(env))
+    } catch {
+      case e: javax.naming.AuthenticationException => throw new InvalidPasswordException("Invalid password", e)
+    }
   }
 }
 
