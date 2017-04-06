@@ -15,9 +15,9 @@ case class Profile(
   firstName: Option[String], 
   lastName: Option[String],
   fullName: Option[String], 
-  passwordInfo:Option[PasswordInfo], 
-  oauth1Info: Option[OAuth1Info],
-  ldapInfo: Option[LdapInfo]) {
+  passwordInfo:Option[PasswordInfo] = None,
+  oauth1Info: Option[OAuth1Info] = None,
+  ldapInfo: Option[LdapInfo] = None) {
 }
 
 case class User(id: UUID, profiles: List[Profile]) extends Identity {

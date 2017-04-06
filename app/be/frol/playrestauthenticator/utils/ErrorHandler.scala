@@ -16,7 +16,7 @@ import play.api.{Configuration, OptionalSourceMapper}
 import scala.concurrent.Future
 import be.frol.playrestauthenticator.errors.{AuthenticationException, InvalidCredentialsException, UnauthorizedException}
 import be.frol.playrestauthenticator.errors.AuthenticationException._
-import org.slf4j.LoggerFactory
+import play.Logger
 import play.api.libs.json.Json
 
 class ErrorHandler @Inject() (
@@ -50,5 +50,5 @@ class ErrorHandler @Inject() (
 }
 
 object ErrorHandler{
-  val logger = LoggerFactory.getLogger(this.getClass)
+  val logger = Logger.of(classOf[ErrorHandler])
 }

@@ -4,6 +4,10 @@ import java.util
 import javax.inject.Inject
 
 import be.frol.playrestauthenticator.models.User
+import be.frol.playrestauthenticator.providers.LdapProvider
+import be.frol.playrestauthenticator.services.{UserService, UserTokenService}
+import be.frol.playrestauthenticator.utils.Mailer
+import be.frol.playrestauthenticator.utils.bodyparser.JsonParser
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.{Credentials, PasswordHasher}
@@ -15,10 +19,6 @@ import play.api.i18n.MessagesApi
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc._
-import be.frol.playrestauthenticator.providers.LdapProvider
-import be.frol.playrestauthenticator.services.{UserService, UserTokenService}
-import be.frol.playrestauthenticator.utils.Mailer
-import be.frol.playrestauthenticator.utils.bodyparser.JsonParser
 
 import scala.language.implicitConversions
 
@@ -33,7 +33,7 @@ class AuthLdapRest @Inject()(
                               avatarService: AvatarService,
                               passwordHasher: PasswordHasher,
                               configuration: Configuration,
-                              mailer: Mailer) extends Silhouette[User, CookieAuthenticator] {
+                              mailer: Mailer) extends Silhouette[User, CookieAuthenticator] with SignInTrait {
 
 
   implicit val credentialsFormat = Json.format[Credentials]
@@ -45,11 +45,12 @@ class AuthLdapRest @Inject()(
   }
 
   def signIn = Action.async(JsonParser.success[Credentials]) { implicit request =>
-    request.body
-      .flatMap { credentials =>
-        ldapProvider.authenticate(credentials)
-      }
-      .map(v => Ok(v.toString))
+    signInLoginInfo {
+      request.body
+        .flatMap { credentials =>
+          ldapProvider.authenticate(credentials)
+        }
+    }
   }
 
 

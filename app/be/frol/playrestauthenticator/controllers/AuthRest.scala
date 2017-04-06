@@ -37,7 +37,7 @@ class AuthRest @Inject()(
                           avatarService: AvatarService,
                           passwordHasher: PasswordHasher,
                           configuration: Configuration,
-                          mailer: Mailer) extends Silhouette[User,CookieAuthenticator] {
+                          mailer: Mailer) extends Silhouette[User,CookieAuthenticator] with SignInTrait{
 
 
   implicit val newUserCredentialsRead: Reads[Profile] = (
@@ -67,17 +67,17 @@ class AuthRest @Inject()(
   }
 
   def signIn = Action.async(JsonParser.success[Credentials]) { implicit request =>
-      request.body
-      .flatMap(credentialsProvider.authenticate)
-      .zipMap(userService.retrieve)
-      .map {
-        case (_,None) => throw new InvalidCredentialsException("Invalid credentials")
-        case (li,Some(user)) if !user.profileFor(li).map(_.confirmed).getOrElse(false) => throw new AuthenticationException("USER_NOT_CONFIRMED","The user is not confirmed")
-        case (li,_) => li
+      signInLoginInfo{
+        request.body
+          .flatMap(credentialsProvider.authenticate)
+          .zipMap(userService.retrieve)
+          .map {
+            case (_,None) => throw new InvalidCredentialsException("Invalid credentials")
+            case (li,Some(user)) if !user.profileFor(li).map(_.confirmed).getOrElse(false) => throw new AuthenticationException("USER_NOT_CONFIRMED","The user is not confirmed")
+            case (li,_) => li
+          }
       }
-      .flatMap(env.authenticatorService.create(_))
-      .flatMap(env.authenticatorService.init)
-      .flatMap(env.authenticatorService.embed(_, Ok))
+
   }
 
 

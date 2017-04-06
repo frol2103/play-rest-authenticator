@@ -24,12 +24,13 @@ import javax.inject.Inject
 import javax.naming.Context
 import javax.naming.directory.{InitialDirContext, SearchControls}
 
+import be.frol.playrestauthenticator.models.Profile
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.{Credentials, ExecutionContextProvider, PasswordHasher}
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
-import play.Logger
 import be.frol.playrestauthenticator.providers.LdapProvider._
+import be.frol.playrestauthenticator.services.UserService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,7 +38,10 @@ import scala.concurrent.{ExecutionContext, Future}
   * A provider for authenticating with ldap.
   *
   */
-class LdapProvider @Inject()(authInfoRepository: AuthInfoRepository)(implicit val executionContext: ExecutionContext)
+class LdapProvider @Inject()(
+                              authInfoRepository: AuthInfoRepository,
+                              userService: UserService
+                            )(implicit val executionContext: ExecutionContext)
   extends Provider with ExecutionContextProvider {
 
   /**
@@ -48,12 +52,12 @@ class LdapProvider @Inject()(authInfoRepository: AuthInfoRepository)(implicit va
   override def id = ID
 
 
-  private def findOrSave(loginInfo: LoginInfo)(recover : => LdapInfo) : Future[LdapInfo] = {
+  private def findOrSave(loginInfo: LoginInfo)(recover : => Profile) : Future[LdapInfo] = {
     authInfoRepository.find[LdapInfo](loginInfo).flatMap{
       case Some(s) => Future.successful(s)
       case None => {
-        val ldapInfo = ldapInfoFor(loginInfo.providerKey)
-        authInfoRepository.update(loginInfo, ldapInfo)
+        val ldapInfo = ldapProfile(loginInfo)
+        userService.saveNewUser(ldapInfo).map(_ => ldapInfo.ldapInfo.get)
       }
     }
   }
@@ -70,24 +74,29 @@ class LdapProvider @Inject()(authInfoRepository: AuthInfoRepository)(implicit va
     */
   def authenticate(credentials: Credentials): Future[LoginInfo] = {
     val loginInfo = LoginInfo(id, credentials.identifier)
-    findOrSave(loginInfo)(ldapInfoFor(credentials.identifier))
+    findOrSave(loginInfo)(ldapProfile(loginInfo))
       .map{authInfo => checkPassword(authInfo, credentials); loginInfo}
   }
 
-  private def recoverAndSaveLdapInfoFor(loginInfo: LoginInfo) : Future[LdapInfo] = {
-    val infos = ldapInfoFor(loginInfo.providerKey)
-    authInfoRepository.save(loginInfo, infos)
-  }
-
-  private def ldapInfoFor(email:String) : LdapInfo= {
-    Logger.of(this.getClass).debug("getting ldap info for email: " + email)
+  private def ldapProfile(loginInfo: LoginInfo) : Profile= {
     val ctx = contextFor("cn=admin,dc=ldap,dc=example,dc=org", "mysecretpassword")
     val ctrls = new SearchControls();
     ctrls.setReturningAttributes(Array("givenName", "sn", "cn", "givenName", "memberOf", "mail"));
     ctrls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-    val answers = ctx.search("dc=ldap,dc=example,dc=org", "(mail=" + email + ")", ctrls);
+    val answers = ctx.search("dc=ldap,dc=example,dc=org", "(mail=" + loginInfo.providerKey + ")", ctrls);
+
+    if(!answers.hasMore) throw new IdentityNotFoundException("Identity not found in ldap")
+
     val result = answers.nextElement();
-    LdapInfo(result.getNameInNamespace());
+    def getAttribute(key: String): Option[String] = Some{result.getAttributes.get(key).get().toString}
+
+    Profile(loginInfo,
+      true,
+      Some(loginInfo.providerID),
+      getAttribute("givenName"),
+      getAttribute("sn"),
+      getAttribute("cn"),
+      ldapInfo = Some(LdapInfo(result.getNameInNamespace())));
   }
 
 

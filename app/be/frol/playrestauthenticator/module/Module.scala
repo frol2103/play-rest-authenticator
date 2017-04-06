@@ -90,9 +90,10 @@ class Module extends AbstractModule with ScalaModule {
 
   @Provides
   def provideLdapProvider(
-                           authInfoRepository: AuthInfoRepository
+                           authInfoRepository: AuthInfoRepository,
+                           userService: UserService
                          ) : LdapProvider = {
-    new LdapProvider(authInfoRepository)
+    new LdapProvider(authInfoRepository,userService)
   }
 
   @Provides
