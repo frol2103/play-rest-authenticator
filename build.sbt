@@ -38,7 +38,8 @@ libraryDependencies ++= Seq(
   "info.cukes" %% "cucumber-scala" % "1.2.5" % IntegrationTest,
   "info.cukes" % "cucumber-junit" % "1.2.5" % IntegrationTest,
   "info.cukes" % "cucumber-guice" % "1.2.5" % IntegrationTest,
-  "org.scalaj" %% "scalaj-http" % "2.3.0" % IntegrationTest
+  "org.scalaj" %% "scalaj-http" % "2.3.0" % IntegrationTest,
+  "org.jacoco" % "org.jacoco.agent" % "0.7.9" % Test
 
 )
 
